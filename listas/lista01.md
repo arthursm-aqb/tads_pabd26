@@ -122,3 +122,21 @@ INSERT INTO orders_products (order_id, product_id, quantity, unit_price) VALUES
 13.	Liste a quantidade de pedidos realizados por cada usuário.
 14.	Listar os três produtos mais vendidos.
 15.	Gerar um relatório com: usuários, quantidade de pedidos e valor total comprado.
+
+
+## Respostas das questões
+
+R_1. Liste os produtos com preço superior a R$ 1000.
+```
+SELECT * FROM products p WHERE p.price>1000;
+```
+
+R_2. Liste os produtos ordenados pelo preço, do maior para o menor.
+```
+SELECT * FROM products p ORDER BY p.price DESC;
+```
+
+R_6. Liste todos os pedidos realizados nos últimos 30 dias.
+```
+SELECT * FROM orders o WHERE o.order_date>=now()-interval '30 days';
+```
