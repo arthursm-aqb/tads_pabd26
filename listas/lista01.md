@@ -164,3 +164,17 @@ R_10. Liste produtos que nunca foram vendidos.
 SELECT id, name, price, stock, created_at FROM products EXCEPT (SELECT p.id, p.name, p.price, p.stock, p.created_at FROM products p INNER JOIN orders_products op ON p.id = op.product_id);
 ```
 
+R_11. Liste usuários que nunca realizaram pedidos.
+```
+SELECT u.* FROM users u LEFT JOIN orders o ON u.id = o.user_id WHERE o.user_id IS NULL; 
+```
+
+R_12. Liste os produtos com preço acima da média em ordem decrescente.
+```
+SELECT * FROM products WHERE price>AVG(price) ORDER BY price DESC;
+```
+
+R_13. Liste a quantidade de pedidos realizados por cada usuário.
+```
+SELECT u.name, COUNT(o.id) FROM users u LEFT JOIN orders o ON u.id = o.user_id GROUP BY u.name;
+```
