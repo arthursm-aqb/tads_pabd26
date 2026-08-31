@@ -178,3 +178,11 @@ R_13. Liste a quantidade de pedidos realizados por cada usuário.
 ```
 SELECT u.name, COUNT(o.id) FROM users u LEFT JOIN orders o ON u.id = o.user_id GROUP BY u.name;
 ```
+
+R_14. Listar os três produtos mais vendidos.
+```
+SELECT p.id, p.name, SUM(op.quantity) total
+FROM products p LEFT JOIN orders_products op ON p.id = op.product_id
+GROUP BY p.id, p.name
+ORDER BY SUM(op.quantity) DESC LIMIT 3;
+```
