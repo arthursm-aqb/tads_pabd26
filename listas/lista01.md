@@ -136,6 +136,28 @@ R_2. Liste os produtos ordenados pelo preço, do maior para o menor.
 SELECT * FROM products p ORDER BY p.price DESC;
 ```
 
+R_3. Aumente o preço de todos os produtos da `Dell` em 10%.
+```
+UPDATE products
+SET price = price * 1.10
+WHERE name LIKE '%Dell%';
+```
+
+R_4. Exclua todos os produtos que sejam do tipo `Macbook`.
+```
+DELETE FROM products
+WHERE name ILIKE '%Macbook%';
+```
+
+R_5. Exclua um produto que não possua pedidos associados.
+```
+DELETE FROM products
+WHERE id NOT IN(
+    SELECT product_id
+    FROM orders_products
+);
+```
+
 R_6. Liste todos os pedidos realizados nos últimos 30 dias.
 ```
 SELECT * FROM orders o WHERE o.order_date>=now()-interval '30 days';
@@ -185,4 +207,15 @@ SELECT p.id, p.name, SUM(op.quantity) total
 FROM products p LEFT JOIN orders_products op ON p.id = op.product_id
 GROUP BY p.id, p.name
 ORDER BY SUM(op.quantity) DESC LIMIT 3;
+```
+R_15. Gerar um relatório com: usuários, quantidade de pedidos e valor total comprado.
+```
+\copy (    
+  SELECT u.name Usuario, SUM(o.id) Pedidos, SUM(op.quantity*op.unit_price) TOTAL
+  FROM users u
+  LEFT JOIN orders o ON u.id = o.user_id
+  LEFT JOIN orders_products op ON o.id = op.order_id
+  GROUP BY u.id, u.name
+  ORDER BY Pedidos DESC
+ ) TO 'relatorio.csv' WITH (FORMAT CSV, HEADER TRUE, DELIMITER ';');
 ```
