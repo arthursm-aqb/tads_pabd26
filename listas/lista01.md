@@ -140,3 +140,27 @@ R_6. Liste todos os pedidos realizados nos últimos 30 dias.
 ```
 SELECT * FROM orders o WHERE o.order_date>=now()-interval '30 days';
 ```
+
+R_7. Liste os pedidos e os respectivos nomes de usuário.
+```
+SELECT u.id ID_Usuario, u.name Nome, o.id ID_Pedido, o.status Status, o.order_date Horário
+FROM orders o INNER JOIN users u ON o.user_id = u.id; 
+```
+
+R_8. Liste todos os usuários e seus pedidos, inclusive usuários sem pedidos.
+```
+SELECT u.id ID_Usuario, u.name Nome, o.id ID_Pedido, o.status Status, o.order_date Horário
+FROM orders o LEFT JOIN users u ON o.user_id = u.id;
+```
+
+R_9. Liste todos os usuários (id, nome e email) que realizaram pelo menos um pedido.
+```
+SELECT DISTINCT u.id ID_Usuario, u.name Nome, u.email Email
+FROM orders o INNER JOIN users u ON o.user_id = u.id;
+```
+
+R_10. Liste produtos que nunca foram vendidos.
+```
+SELECT id, name, price, stock, created_at FROM products EXCEPT (SELECT p.id, p.name, p.price, p.stock, p.created_at FROM products p INNER JOIN orders_products op ON p.id = op.product_id);
+```
+
