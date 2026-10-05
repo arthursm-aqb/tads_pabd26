@@ -34,3 +34,7 @@ INNER JOIN payment P ON P.rental_id =  R.rental_id
 GROUP BY Categoria
 ORDER BY Arrecadado DESC
 WITH DATA;
+
+CREATE UNIQUE INDEX CONCURRENTLY mv_category_name_index ON mv_category_total_sales(Categoria);
+
+REFRESH MATERIALIZED VIEW CONCURRENTLY mv_category_total_sales;
