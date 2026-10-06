@@ -95,3 +95,44 @@ CREATE INDEX costumer_lowcaser_index ON customer (lower(email));
 
 EXPLAIN ANALYZE
 SELECT email FROM customer WHERE lower(email) = lower('MARY.SMITH@GMAIL.COM');
+
+--  Bitmap Heap Scan on customer  (cost=4.30..11.15 rows=3 width=32) (actual time=0.060..0.061 rows=0.00 loops=1)
+-- Recheck Cond: (lower((email)::text) = 'mary.smith@gmail.com'::text)
+-- Buffers: shared hit=2
+-- ->  Bitmap Index Scan on costumer_lowcaser_index  (cost=0.00..4.30 rows=3 width=0) (actual time=0.048..0.048 rows=0.00 loops=1)
+--         Index Cond: (lower((email)::text) = 'mary.smith@gmail.com'::text)
+--         Index Searches: 1
+--        Buffers: shared hit=2
+-- Planning Time: 0.189 ms
+-- Execution Time: 0.089 ms
+
+-- Questâo 7
+
+CREATE OR REPLACE FUNCTION rental_devolucao()
+    RETURNS trigger
+    LANGUAGE plpgsql
+AS 
+$$
+ BEGIN
+    IF NEW.return_date IS NOT NULL AND NEW.return_date < OLD.rental_date THEN
+        RAISE EXCEPTION 'Data de retorno anterior a data de aluguel';
+    END IF;
+
+    RETURN NEW;
+ END;
+$$;
+
+CREATE TRIGGER return_date_change
+    BEFORE INSERT OR UPDATE 
+    ON rental
+    FOR EACH ROW
+    EXECUTE PROCEDURE rental_devolucao();
+
+
+UPDATE rental
+SET return_date = '2005-04-21'
+WHERE rental_id = 2;
+
+UPDATE rental
+SET return_date = '2005-05-26'
+WHERE rental_id = 2;
