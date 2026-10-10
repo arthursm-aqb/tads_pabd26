@@ -111,7 +111,7 @@ SELECT email FROM customer WHERE lower(email) = lower('MARY.SMITH@GMAIL.COM');
 CREATE OR REPLACE FUNCTION rental_devolucao()
     RETURNS trigger
     LANGUAGE plpgsql
-AS 
+AS
 $$
  BEGIN
     IF NEW.return_date IS NOT NULL AND NEW.return_date < OLD.rental_date THEN
@@ -123,7 +123,7 @@ $$
 $$;
 
 CREATE TRIGGER return_date_change
-    BEFORE INSERT OR UPDATE 
+    BEFORE INSERT OR UPDATE
     ON rental
     FOR EACH ROW
     EXECUTE PROCEDURE rental_devolucao();
@@ -136,3 +136,40 @@ WHERE rental_id = 2;
 UPDATE rental
 SET return_date = '2005-05-26'
 WHERE rental_id = 2;
+
+-- Questão 8
+
+DROP TABLE film_cost_audit;
+
+CREATE TABLE IF NOT EXISTS film_cost_audit(
+    id SERIAL PRIMARY KEY,
+    film_id INT NOT NULL,
+    old_cost NUMERIC(5,2) NOT NULL,
+    new_cost NUMERIC(5,2) NOT NULL,
+    changed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_film FOREIGN KEY (film_id) REFERENCES film(film_id)
+);
+
+CREATE OR REPLACE FUNCTION auditoria_film()
+    RETURNS trigger
+    LANGUAGE plpgsql
+AS
+$$
+ BEGIN
+    INSERT INTO film_cost_audit(film_id, old_cost, new_cost)
+    VALUES (NEW.film_id, OLD.replacement_cost, NEW.replacement_cost);
+    RETURN NEW;
+ END;
+$$;
+
+CREATE TRIGGER auditoria_film_trigger
+    AFTER UPDATE
+    OF replacement_cost ON film
+    FOR EACH ROW
+    WHEN (NEW.replacement_cost != OLD.replacement_cost)
+    EXECUTE PROCEDURE auditoria_film();
+
+
+UPDATE film
+SET replacement_cost = 16.00
+WHERE film_id = 133;
