@@ -173,3 +173,62 @@ CREATE TRIGGER auditoria_film_trigger
 UPDATE film
 SET replacement_cost = 16.00
 WHERE film_id = 133;
+
+-- Questão 9
+
+CREATE OR REPLACE FUNCTION idioma_film()
+    RETURNS trigger
+    LANGUAGE plpgsql
+AS
+$$
+ BEGIN
+    IF EXISTS(SELECT 1 FROM film WHERE language_id = OLD.language_id) THEN
+        RAISE EXCEPTION 'Idioma % tem filmes cadastrados, não é possível removê-lo.', OLD.name;
+    END IF;
+
+    RETURN OLD;
+ END;
+$$;
+
+CREATE TRIGGER idioma_film_trigger
+    BEFORE DELETE
+    ON language
+    FOR EACH ROW
+    EXECUTE PROCEDURE idioma_film();
+
+
+DELETE FROM language;
+
+-- Questão 10
+
+CREATE TABLE customer_rental_stats(
+    customer_id INT PRIMARY KEY,
+    total_rentals BIGINT DEFAULT 0
+);
+
+INSERT INTO customer_rental_stats(customer_id, total_rentals)
+SELECT customer_id, COUNT(rental_id)
+FROM rental
+GROUP BY customer_id;
+
+CREATE OR REPLACE FUNCTION auto_c_r_stats()
+    RETURNS trigger
+    LANGUAGE plpgsql
+AS
+$$
+ BEGIN
+
+ INSERT INTO customer_rental_stats (customer_id, total_rentals)
+ VALUES (NEW.customer_id, 1)
+ ON CONFLICT (customer_id)
+ DO UPDATE SET total_rentals = customer_rental_stats.total_rentals + 1;
+
+    RETURN NEW;
+ END;
+$$;
+
+CREATE TRIGGER auto_cr_stats_trigger
+AFTER INSERT
+ON rental
+FOR EACH ROW
+EXECUTE PROCEDURE auto_c_r_stats();
