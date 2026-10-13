@@ -1,0 +1,36 @@
+                     List of relations
+ Schema |               Name               | Type  | Owner 
+--------+----------------------------------+-------+-------
+ public | chassis                          | table | admin
+ public | circuit                          | table | admin
+ public | circuit_layout                   | table | admin
+ public | constructor                      | table | admin
+ public | constructor_chronology           | table | admin
+ public | continent                        | table | admin
+ public | country                          | table | admin
+ public | driver                           | table | admin
+ public | driver_family_relationship       | table | admin
+ public | engine                           | table | admin
+ public | engine_manufacturer              | table | admin
+ public | entrant                          | table | admin
+ public | grand_prix                       | table | admin
+ public | race                             | table | admin
+ public | race_constructor_standing        | table | admin
+ public | race_data                        | table | admin
+ public | race_driver_standing             | table | admin
+ public | season                           | table | admin
+ public | season_constructor               | table | admin
+ public | season_constructor_standing      | table | admin
+ public | season_driver                    | table | admin
+ public | season_driver_standing           | table | admin
+ public | season_engine_manufacturer       | table | admin
+ public | season_entrant                   | table | admin
+ public | season_entrant_chassis           | table | admin
+ public | season_entrant_constructor       | table | admin
+ public | season_entrant_driver            | table | admin
+ public | season_entrant_engine            | table | admin
+ public | season_entrant_tyre_manufacturer | table | admin
+ public | season_tyre_manufacturer         | table | admin
+ public | tyre_manufacturer                | table | admin
+(31 rows)
+
